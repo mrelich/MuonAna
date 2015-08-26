@@ -82,7 +82,7 @@ for i in range(len(pred)):
 #        h_bkg_eval.Fill(pred_eval[i],weights[i])
 
 # write to file
-output = TFile("test2_PeV.root","recreate")
+output = TFile("test_PeV.root","recreate")
 output.cd()
 h_sig.Write()
 h_bkg.Write()

@@ -1,3 +1,12 @@
-2015-25-2015 Matt:
+2015-08-26 Matt:
+	* Adding master.py to run a variety of options
+	* Adding TMVATest.py which will generate basic plots used for validation in TMVA
+	* Adding Tools.py to clean up master.py
+	* Adding Validation.py to do the cross-validation once a parameter set has been chosen
+	* Adding GridSearch.py to perform a search for best hyper-parameters
+	* Adding a setup directory script so I can take this code to other machines and create
+		the same directory structure
+
+2015-08-25 Matt:
 	* Adding directory structure
 	* Committing first round of scripts

@@ -9,7 +9,8 @@ fsig = "trees/NuGen_10634_Aug24.root"
 fbkg = "trees/Corsika_11362_Aug24.root"
 
 # Specific cuts to be used when extracting data
-cuts = "passL3Muon&&cos(spline_mpe_zen)<0.2"
+#cuts = "passL3Muon&&cos(spline_mpe_zen)<0.2"
+cuts = "passL3Muon"
 sigcut = "log10(nuE)>=6"
 
 # How to split the data

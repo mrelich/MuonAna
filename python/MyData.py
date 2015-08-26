@@ -20,7 +20,17 @@ class Data:
                   'sqrt(pow(hs_cogx,2)+pow(hs_cogy,2))',
                   '(dhC_ndir_doms != 0 ? dhC_qdir_pulses/dhC_ndir_doms : 0)',
                   #'dhC_track_hit_dist_smoothness', # seems to be NAN a lot...
-              ]
+    ]
+    
+    # Names of variables for a legend or axis
+    l_varnames = ['NPE',
+                  'cos(Spline MPE Zen)',
+                  'Spline MPE rlogl',
+                  'llh ratio',
+                  'COGz',
+                  'COGrho',
+                  'NPEdir/Nchdir']
+
     #t_varnames = ['hs_q_tot_pulses',
     #              'hs_cogz',
     #              'sqrt(pow(hs_cogx,2)+pow(hs_cogy,2))',
@@ -43,12 +53,12 @@ class Data:
     sname = ""
 
     # Simple constructor
-    def __init__(self,data=None,targets=None,sname=None):
-        self.data    = data
-        self.targets = targets
-        self.sname   = sname
+    def __init__(self,data=None,targets=None,sname=None,sf=1):
+        self.data    = data         # list of variables per event
+        self.targets = targets      # target 1-sig, 0-bkg
+        self.sname   = sname        # some name in case we want to check later
+        self.sf      = sf           # weight scale factor for when we divide up dataset
 
-    # Method to set parameters
     def setData(self,data):
         self.data = data
     
@@ -57,6 +67,9 @@ class Data:
     
     def setName(self,sname):
         self.sname = sname
+
+    def setSF(self,sf):
+        self.sf = sf
 
     # When we train and predict for 
     # the BDT we want to remove the 
