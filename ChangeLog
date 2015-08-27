@@ -1,3 +1,13 @@
+2015-08-27 Matt:
+	* Fixing how samples are split so that weighting makes sense
+	* Adding Evaluation.py which will plot the bdt score for evaluated data
+	* Adding PlotEffArea.py which is untested and sloppy..
+	* Adding SaveInfo.py which will save models and write output to trees.  The trees part
+		isn't implemented yet
+	* Committing some updates where I commented things out in TMVATest.py
+	* Update to MyData.py keeping some variables needed to plot Eff Area.
+		Updated getDataNoWeight method
+
 2015-08-26 Matt:
 	* Adding master.py to run a variety of options
 	* Adding TMVATest.py which will generate basic plots used for validation in TMVA

@@ -11,20 +11,24 @@ from sklearn.ensemble import AdaBoostClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import classification_report, roc_auc_score
 
+from sklearn.ensemble import GradientBoostingClassifier
+
 #-----------------------------------------------------#
 # Perform grid search on development data
 #-----------------------------------------------------#
 def gridSearch(dt_dev, dt_eval):
 
     # Make the BDT classifier
-    bdt = AdaBoostClassifier(DecisionTreeClassifier(max_depth=opts.maxdepth),    
-                             algorithm = 'SAMME',
-                             n_estimators=opts.ntrees,
-                             learning_rate=opts.lrate)
+    #bdt = AdaBoostClassifier(DecisionTreeClassifier(max_depth=opts.maxdepth),    
+    #                         algorithm = 'SAMME',
+    #                         n_estimators=opts.ntrees,
+    #                         learning_rate=opts.lrate)
+    bdt = GradientBoostingClassifier()
     
     # Setup the parameter grid to scan
     pgrid = {"n_estimators": [100,200,300,400,500,800,1000],
-             "base_estimator__max_depth": [2,3,4,5,6],
+             #"base_estimator__max_depth": [2,3,4,5,6],
+             "max_depth": [2,3,4,5,6],
              "learning_rate": [0.1,0.3,0.5,0.7,0.9,1.1,1.3]
          }
     

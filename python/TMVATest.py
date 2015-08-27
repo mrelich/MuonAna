@@ -26,6 +26,8 @@ from pandas.tools.plotting import scatter_matrix
 
 import matplotlib.pyplot as plt
 
+from sklearn.externals import joblib
+
 #------------------------------------------------#
 # Correlation plots
 #------------------------------------------------#
@@ -153,7 +155,7 @@ def test_train_compare(bdt, dt_train, dt_test, bins=30):
 #------------------------------------------------#
 # Method to make plots as are done in TMVA
 #------------------------------------------------#
-def tmvatest(dt_total, dt_train, dt_test):
+def tmvatest(dt_total, dt_train, dt_test,bdtpath=""):
 
 
     # Use panda data format for the plots
@@ -166,21 +168,27 @@ def tmvatest(dt_total, dt_train, dt_test):
     cbkg = pdt_tot.y < 0.5
 
     # Plot correlations
-    #correlations(pdt_tot[cbkg].drop('y',1),"var_cor_bkg")
-    #correlations(pdt_tot[csig].drop('y',1),"var_cor_sig")
+    correlations(pdt_tot[cbkg].drop('y',1),"var_cor_bkg")
+    correlations(pdt_tot[csig].drop('y',1),"var_cor_sig")
 
-    # Make BDT -- here we will use the options
-    # specified in Options.py
-    bdt = AdaBoostClassifier(DecisionTreeClassifier(max_depth=opts.maxdepth),    
-                             algorithm = 'SAMME',
-                             n_estimators=opts.ntrees,
-                             learning_rate=opts.lrate)
+    # Try to read in bdt if path set
+    bdt = None
+    if bdtpath != "":
+        bdt = joblib.load(bdtpath)
+        print "Loaded model from", bdtpath
+        print bdt
+    else:
+        print "Training new BDT using params in Options.py"
+        bdt = AdaBoostClassifier(DecisionTreeClassifier(max_depth=opts.maxdepth),    
+                                 algorithm = 'SAMME',
+                                 n_estimators=opts.ntrees,
+                                 learning_rate=opts.lrate)
 
-    # Train and test BDT
-    bdt.fit(dt_train.getDataNoWeight(), dt_train.targets)
+        # Train bdt
+        bdt.fit(dt_train.getDataNoWeight(), dt_train.targets)
 
     # Make comparison figures for test and training
-    #test_train_ROC(bdt, dt_train, dt_test)
+    test_train_ROC(bdt, dt_train, dt_test)
     
     # Do the simple over-training check
     test_train_compare(bdt, dt_train, dt_test)

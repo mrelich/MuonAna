@@ -18,7 +18,8 @@ devfrac   = 0.33  # This will be used for training and testing
 trainfrac = 0.5   # XX% of development fraction to be used for training
 
 # BDT parameters
-ntrees   = 200
-lrate    = 0.5
-maxdepth = 3
+# Optimal taken from grid search
+ntrees   = 800
+lrate    = 0.1
+maxdepth = 6
 

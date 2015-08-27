@@ -31,16 +31,6 @@ class Data:
                   'COGrho',
                   'NPEdir/Nchdir']
 
-    #t_varnames = ['hs_q_tot_pulses',
-    #              'hs_cogz',
-    #              'sqrt(pow(hs_cogx,2)+pow(hs_cogy,2))',
-    #              'L3_BestFit_Rlogl',
-    #              'cos(L3_BestFit_zen)',
-    #              'hs_max_pulse_time - hs_min_pulse_time',
-    #              '(q_out0/28.+q_out1/22.)/((q_out0/28.+q_out1/22.+q_out2/15.+q_in/13.))',
-    #]
-    
-
     # Variable names needed for weights
     w_varnames = ['nuE',
                   'NEvents',
@@ -50,7 +40,13 @@ class Data:
                   'CorsikaDiffFlux',
     ]
 
+    # THe sample name
     sname = ""
+
+    # Variables needed for calculating eff area
+    spectators = ['nuE',
+                  'OneWeight',
+    ]
 
     # Simple constructor
     def __init__(self,data=None,targets=None,sname=None,sf=1):
@@ -71,11 +67,15 @@ class Data:
     def setSF(self,sf):
         self.sf = sf
 
+    def setSpectators(self, spec):
+        self.specdata = spec
+
     # When we train and predict for 
     # the BDT we want to remove the 
     # weights from the list. 
     def getDataNoWeight(self):
-        return self.data[:,:-1]
+        #return self.data[:,:-1]
+        return self.data[:,:-len(self.w_varnames+['w'])]
 
     # Maybe we want just the weights
     def getDataWeights(self):
@@ -109,7 +109,8 @@ def ReadData(path_to_file, sname, selection=""):
 
 
     # Convert to record array
-    indata = rec2array(indata,fields=dataobj.t_varnames + ['w'])
+    #indata = rec2array(indata,fields=dataobj.t_varnames + ['w'])
+    indata  = rec2array(indata)
 
     # Remove nan if exists
     indata = indata[~np.isnan(indata).any(axis=1)]
