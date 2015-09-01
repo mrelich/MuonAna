@@ -5,7 +5,6 @@
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=#
 
 from MyData import Data
-import Options as opts
 
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.tree import DecisionTreeClassifier
@@ -18,13 +17,13 @@ import numpy as np
 #------------------------------------------------------#
 # Method to evaluate and plot bdt score
 #------------------------------------------------------#
-def evaluate(dt_eval, dt_train, bdtfile=""):
+def evaluate(dt_eval, dt_train, opts):
     
-    # If bdtfile is specified then read in model
+    # If modelinput is specified then read in model
     bdt = None
-    if bdtfile != "":
-        bdt = joblib.load(bdtfile)
-        print "Loaded model back"
+    if len(opts.modelinput) != 0:
+        bdt = joblib.load(opts.modelinput)
+        print "Loaded model back ", opts.bdtname
         print bdt        
     else:
         print "Model not specified..."
@@ -46,7 +45,7 @@ def evaluate(dt_eval, dt_train, bdtfile=""):
 
 
     # Print some information for a set of cuts
-    cuts = [0.4,0.45,0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9]
+    cuts = np.arange(0,1,0.05)
     for cut in cuts:
         print "------------------------------------------"
         print "cut: ", cut
@@ -56,16 +55,19 @@ def evaluate(dt_eval, dt_train, bdtfile=""):
     # Make figure and axis
     fig, ax = plt.subplots(ncols=1, figsize=(10,7))
 
+    # Set minimum and maximum for x-axis
+    xminmax = (-1,1)
+
     # Make hist for signal
     plt.hist(sig_scores, weights=sig_weights,
-             color='b',label='signal',range=(-1,1),
+             color='r',label='signal',range=xminmax,
              alpha=0.5,
              bins = 100, log=True,
              histtype='stepfilled')
 
     # Make hist for bkg
     plt.hist(bkg_scores, weights=bkg_weights,
-             color='r',label='background',range=(-1,1),
+             color='b',label='background',range=xminmax,
              alpha=0.5,
              bins = 100, log=True,
              histtype='stepfilled')
@@ -76,10 +78,10 @@ def evaluate(dt_eval, dt_train, bdtfile=""):
     plt.legend(loc='best')
     plt.grid()
     plt.xticks(np.arange(-1, 1.1, 0.1))
-    #ax.set_ylim(bottom=0)
+    #plt.xticks(np.arange(-5, 5.2, 0.5))
     #plt.semilogy()
     #ax.set_yscale("log")
-    plt.savefig("plots/evaluate/WeightedResult.eps")
+    #plt.savefig("plots/evaluate/WeightedResult_"+opts.bdtname+".png")
 
     plt.show()
 

@@ -4,7 +4,7 @@
 # the hyper-parameters.  This script will do that.        #
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-#
 
-import Options as opts
+from Options import Options
 
 from sklearn import grid_search
 from sklearn.ensemble import AdaBoostClassifier
@@ -16,26 +16,25 @@ from sklearn.ensemble import GradientBoostingClassifier
 #-----------------------------------------------------#
 # Perform grid search on development data
 #-----------------------------------------------------#
-def gridSearch(dt_dev, dt_eval):
+def gridSearch(dt_dev, dt_eval, opts):
 
     # Make the BDT classifier
-    #bdt = AdaBoostClassifier(DecisionTreeClassifier(max_depth=opts.maxdepth),    
-    #                         algorithm = 'SAMME',
-    #                         n_estimators=opts.ntrees,
-    #                         learning_rate=opts.lrate)
-    bdt = GradientBoostingClassifier()
+    bdt = AdaBoostClassifier(DecisionTreeClassifier(max_depth=opts.maxdepth),    
+                             algorithm = 'SAMME',
+                             n_estimators=opts.ntrees,
+                             learning_rate=opts.lrate)
     
     # Setup the parameter grid to scan
     pgrid = {"n_estimators": [100,200,300,400,500,800,1000],
-             #"base_estimator__max_depth": [2,3,4,5,6],
-             "max_depth": [2,3,4,5,6],
+             "base_estimator__max_depth": [2,3,4,5,6,7],
+             #"max_depth": [2,3,4,5,6],
              "learning_rate": [0.1,0.3,0.5,0.7,0.9,1.1,1.3]
          }
     
     # Now setup the grid search
     gsearch = grid_search.GridSearchCV(bdt, pgrid, cv=3,
                                        scoring='roc_auc',
-                                       n_jobs=4)
+                                       n_jobs=6)
 
     # Fit dat shit
     _ = gsearch.fit(dt_dev.getDataNoWeight(), dt_dev.targets)

@@ -7,7 +7,7 @@
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=#
 
 from MyData import Data
-import Options as opts
+from Options import Options
 
 from sklearn import cross_validation
 from sklearn.ensemble import AdaBoostClassifier
@@ -34,6 +34,10 @@ def kvalidation(dt_dev, k=3, njobs=2):
 
     # Print the result of the k-fold validation
     # TODO: Make this a plot or something...
+    print "Validating BDT for following parameters:"
+    print "\tnTrees =        ", opts.ntrees
+    print "\tlearning rate = ", opts.lrate
+    print "\tDepth         = ", opts.maxdepth
     print "Accuracy: %0.5f (+/- %0.5f)"%(scores.mean(), scores.std())
 
     print "----------------------------------------"

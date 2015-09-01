@@ -146,11 +146,13 @@ def test_train_compare(bdt, dt_train, dt_test, bins=30):
     plt.ylabel("Arbitrary units")
     plt.legend(loc='best')
     ax1.set_ylim(bottom=0)
-    plt.show()
     
     # Save
-    plt.savefig("plots/tmvatest/overtrain_check.eps")
+    #plt.savefig("plots/tmvatest/overtrain_check.eps")
+    #plt.savefig("plots/tmvatest/overtrain_check.pdf")
+    plt.savefig("plots/tmvatest/overtrain_check.png")
     
+    plt.show()
 
 #------------------------------------------------#
 # Method to make plots as are done in TMVA

@@ -2,7 +2,7 @@
 # My things
 from MyData import Data, ReadData
 from Constants import *
-import Options as opts
+from Options import Options
 from Tools import split_data
 
 # Options to be used
@@ -52,9 +52,21 @@ parser.add_option("--ploteffarea",action="store_true",
 parser.add_option("--model", action="store",
                   default="", dest="modelpath",
                   help="Specify an input path to a pickled model")
-
+parser.add_option("--bdtopt", action="store", type=int,
+                  default=0, dest="bdtopt",
+                  help="Specify bdt option. See Options.py for details")
 
 options, args = parser.parse_args()
+
+#---------------------------------------------------#
+# Setup the Options object
+#---------------------------------------------------#
+
+print "BDT Option:  ", options.bdtopt
+print "Model input: ", options.modelpath
+
+opts = Options(bdtopt = options.bdtopt,
+               modelin = options.modelpath)
 
 #---------------------------------------------------#
 # Prepare the data
@@ -117,6 +129,8 @@ def combine(Xsig,Xbkg,ysig,ybkg,name,sf):
                 name,
                 sf)
 
+d_tot = combine(d_sig.data,d_bkg.data,d_sig.targets,d_bkg.targets,"tot",1)
+
 d_dev = combine(sig_X_dev,bkg_X_dev,sig_y_dev,bkg_y_dev,"dev",
                 1/opts.devfrac)
 d_eval = combine(sig_X_eval,bkg_X_eval,sig_y_eval,bkg_y_eval,"eval",
@@ -133,11 +147,11 @@ d_tst = combine(sig_X_tst,bkg_X_tst,sig_y_tst,bkg_y_tst,"tst",
 # Perform TMVA like test of correlations and
 # comparisons for testing and training set
 if options.tmvatest: 
-    tmvatest(d_tot,d_trn,d_tst,options.modelpath)
+    tmvatest(d_tot,d_trn,d_tst,opts)
 
 # Perform the grid search
 if options.gridsearch: 
-    gridSearch(d_dev, d_eval)
+    gridSearch(d_dev, d_eval, opts)
 
 # Perform validation using parameters in Options.py
 if options.validation:
@@ -149,7 +163,7 @@ if options.explore:
 
 # Save the trained model which can then be used later
 if options.savemodel:
-    savemodel(d_trn)
+    savemodel(d_dev, opts)
 
 # Save the data
 if options.savedata:
@@ -157,8 +171,8 @@ if options.savedata:
 
 # Run over the evaluation data set
 if options.evaluate:
-    evaluate(d_eval,d_trn,options.modelpath)
+    evaluate(d_eval,d_trn,opts)
 
 # Plot effective area
 if options.ploteffarea:
-    ploteffarea(d_eval,d_trn,options.modelpath)
+    ploteffarea(d_eval,d_trn,opts)

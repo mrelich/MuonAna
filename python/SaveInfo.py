@@ -6,9 +6,9 @@
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-#
 
 from MyData import Data
-import Options as opts
+from Options import Options
 
-from sklearn.ensemble import AdaBoostClassifier
+from sklearn.ensemble import AdaBoostClassifier, GradientBoostingClassifier
 from sklearn.tree import DecisionTreeClassifier
 
 from sklearn.externals import joblib # recommended instead of pickle
@@ -19,19 +19,22 @@ import numpy as np
 #------------------------------------------------------#
 # Train and pickle the model
 #------------------------------------------------------#
-def savemodel(dt_train,modelname='adaboost'):
+def savemodel(dt_train, opts):
     
     # Make sure all model parameters are set in Options.py
+    # TODO: Add Classifier options so we can use others 
+    #       e.g. Gradient Boosting
     bdt = AdaBoostClassifier(DecisionTreeClassifier(max_depth=opts.maxdepth),
                              algorithm = 'SAMME',
                              n_estimators=opts.ntrees,
                              learning_rate=opts.lrate)
-    
+
+
     # Train the bdt
     bdt.fit(dt_train.getDataNoWeight(), dt_train.targets)
 
     # Write output to models
-    joblib.dump(bdt, 'models/'+modelname+'.pkl')
+    joblib.dump(bdt, 'models/'+opts.bdtnamename+'.pkl')
 
 
 #------------------------------------------------------#
