@@ -15,11 +15,11 @@ class Data:
     t_varnames = ['hs_q_tot_pulses',
                   'cos(spline_mpe_zen)',
                   'spline_mpe_rlogl',
-                  'spefit2bayes_logl/spefit2_logl',
+                  #'spefit2bayes_logl-spefit2_logl',
                   'hs_cogz',
                   'sqrt(pow(hs_cogx,2)+pow(hs_cogy,2))',
                   '(dhC_ndir_doms != 0 ? dhC_qdir_pulses/dhC_ndir_doms : 0)',
-                  #'dhC_track_hit_dist_smoothness', # seems to be NAN a lot...
+                  'DP_20Per'
     ]
     
     # Names of variables for a legend or axis
@@ -29,7 +29,8 @@ class Data:
                   'llh ratio',
                   'COGz',
                   'COGrho',
-                  'NPEdir/Nchdir']
+                  'NPEdir/Nchdir',
+                  'Dark Percentage']
 
     # Variable names needed for weights
     w_varnames = ['nuE',

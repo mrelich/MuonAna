@@ -25,10 +25,10 @@ def gridSearch(dt_dev, dt_eval, opts):
                              learning_rate=opts.lrate)
     
     # Setup the parameter grid to scan
-    pgrid = {"n_estimators": [100,200,300,400,500,800,1000],
-             "base_estimator__max_depth": [2,3,4,5,6,7],
+    pgrid = {"n_estimators": [100,200,300,400,500,600,700,800,900,1000],
+             "base_estimator__max_depth": [3,4,5,6,7,8,9,10],
              #"max_depth": [2,3,4,5,6],
-             "learning_rate": [0.1,0.3,0.5,0.7,0.9,1.1,1.3]
+             "learning_rate": [0.1,0.3,0.5,0.7,0.9,1.1,1.3,1.5]
          }
     
     # Now setup the grid search

@@ -16,7 +16,7 @@ from sklearn.tree import DecisionTreeClassifier
 #------------------------------------------------#
 # Method to perform the k-fold validation
 #------------------------------------------------#
-def kvalidation(dt_dev, k=3, njobs=2):
+def kvalidation(dt_dev, opts, k=3, njobs=2):
 
     # Create BDT
     bdt = AdaBoostClassifier(DecisionTreeClassifier(max_depth=opts.maxdepth),

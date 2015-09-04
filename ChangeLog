@@ -1,3 +1,7 @@
+2015-09-04 Matt:
+	* Committing n-1 check for variables
+	* Updating variable list -- TODO: understand dark percentage or remove it!
+
 2015-09-01 Matt:
 	* Updating Options.py adding specific bdt options which will be good for testing
 	* Updating gridsearch to include 6 cores by default

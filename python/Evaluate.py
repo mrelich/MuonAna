@@ -40,8 +40,8 @@ def evaluate(dt_eval, dt_train, opts):
     bkg_scores = bdt.decision_function(dt_eval.getDataNoWeight()[dt_eval.targets < 0.5])
 
     # Get weights
-    sig_weights = dt_eval.getDataWeights()[dt_eval.targets > 0.5]
-    bkg_weights = dt_eval.getDataWeights()[dt_eval.targets < 0.5]
+    sig_weights = dt_eval.getDataWeights()[dt_eval.targets > 0.5] * dt_eval.sf
+    bkg_weights = dt_eval.getDataWeights()[dt_eval.targets < 0.5] * dt_eval.sf
 
 
     # Print some information for a set of cuts
@@ -81,7 +81,7 @@ def evaluate(dt_eval, dt_train, opts):
     #plt.xticks(np.arange(-5, 5.2, 0.5))
     #plt.semilogy()
     #ax.set_yscale("log")
-    #plt.savefig("plots/evaluate/WeightedResult_"+opts.bdtname+".png")
+    plt.savefig("plots/evaluate/WeightedResult_"+opts.bdtname+"_withOutBayes_fromModel.png")
 
     plt.show()
 

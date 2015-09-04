@@ -13,6 +13,7 @@ from MethodExplore import explore
 from SaveInfo import savemodel, savedata
 from Evaluate import evaluate
 from PlotEffArea import ploteffarea
+from nMinus1Check import n1check
 
 from sklearn.cross_validation import train_test_split
 
@@ -49,6 +50,9 @@ parser.add_option("--savedata",action="store_true",
 parser.add_option("--ploteffarea",action="store_true",
                   default=False, dest="ploteffarea",
                   help="Plot Effective area")
+parser.add_option("--n1check",action="store_true",
+                  default=False, dest="n1check",
+                  help="Check against some baseline the results of removing a variable")
 parser.add_option("--model", action="store",
                   default="", dest="modelpath",
                   help="Specify an input path to a pickled model")
@@ -106,20 +110,20 @@ sig_X_dev, sig_X_eval, sig_y_dev, sig_y_eval = train_test_split(d_sig.data,
                                                                 d_sig.targets,
                                                                 train_size = opts.devfrac,
                                                                 random_state=2212457)
-sig_X_trn, sig_X_tst, sig_y_trn, sig_y_tst = train_test_split(d_sig.data,
-                                                                d_sig.targets,
-                                                                train_size = opts.trainfrac,
-                                                                random_state=2212457)
+sig_X_trn, sig_X_tst, sig_y_trn, sig_y_tst = train_test_split(sig_X_dev,
+                                                              sig_y_dev,
+                                                              train_size = opts.trainfrac,
+                                                              random_state=2212457)
 
 # Get training and development sets for data
 bkg_X_dev, bkg_X_eval, bkg_y_dev, bkg_y_eval = train_test_split(d_bkg.data,
                                                                 d_bkg.targets,
                                                                 train_size = opts.devfrac,
                                                                 random_state=2212457)
-bkg_X_trn, bkg_X_tst, bkg_y_trn, bkg_y_tst = train_test_split(d_bkg.data,
-                                                                d_bkg.targets,
-                                                                train_size = opts.trainfrac,
-                                                                random_state=2212457)
+bkg_X_trn, bkg_X_tst, bkg_y_trn, bkg_y_tst = train_test_split(bkg_X_dev,
+                                                              bkg_y_dev,
+                                                              train_size = opts.trainfrac,
+                                                              random_state=2212457)
 
 
 # Now combine signal and bkg into dev, eval, trn, and tst
@@ -155,7 +159,7 @@ if options.gridsearch:
 
 # Perform validation using parameters in Options.py
 if options.validation:
-    kvalidation(d_dev, k=3, njobs=2)
+    kvalidation(d_dev, opts, k=3, njobs=2)
 
 # Check some other methods and see if there is any benefit
 if options.explore:
@@ -171,8 +175,12 @@ if options.savedata:
 
 # Run over the evaluation data set
 if options.evaluate:
-    evaluate(d_eval,d_trn,opts)
+    evaluate(d_eval,d_dev,opts)
 
 # Plot effective area
 if options.ploteffarea:
-    ploteffarea(d_eval,d_trn,opts)
+    ploteffarea(d_eval,d_dev,opts)
+
+# Check results of bdt by removing 1 variable
+if options.n1check:
+    n1check(d_trn, d_tst, opts)

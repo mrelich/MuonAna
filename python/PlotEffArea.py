@@ -15,6 +15,8 @@ from sklearn.externals import joblib
 
 from math import cos, log10, pi
 
+import pickle
+
 #------------------------------------------------------#
 # Plotting method
 #------------------------------------------------------#
@@ -42,10 +44,15 @@ def ploteffarea(dt_eval, dt_train, opts):
     sig_data   = dt_eval.data[dt_eval.targets > 0.5]
 
     # Specify the number of bins and the range
-    nbins = int(30)
-    xmin  = float(5)
-    xmax  = float(8)
-    
+    #nbins = int(30)
+    #xmin  = float(5)
+    #xmax  = float(8)
+    # Copying the bins from leif and sebastian for now
+    xmin  = 3
+    xmax  = 9
+    nbins = 20.
+    bins = np.arange(3,9.1,0.3)
+
     # Some constants
     #solidangle = 4*pi
     solidangle = 2 * (1 + cos(85*pi/180)) * pi
@@ -79,19 +86,18 @@ def ploteffarea(dt_eval, dt_train, opts):
         mcemin = mcEMin(mclogebin)
         mcemax = mcEMax(mclogebin)
 
-        if(i < 10):
-            print log10(E), OneWeight, NEvents, nfiles, mclogebin, mcemin, mcemax, log10(E), ebins_per_decade, 1e-4 * OneWeight * nfiles * 1/(solidangle*(mcemax-mcemin))
+        #if(i < 10):
+        #    print log10(E), OneWeight, NEvents, nfiles, mclogebin, mcemin, mcemax, log10(E), ebins_per_decade, 1e-4 * OneWeight * nfiles * 1/(solidangle*(mcemax-mcemin))
 
         #print 1e-4 * OneWeight * nfiles * 1/(solidangle*(mcemax-mcemin))
         effA[i] = 1e-4 * OneWeight * nfiles * 1/(solidangle*(mcemax-mcemin))
         energy[i] = log10(E)
 
 
-
     # Draw eff area
     fig, ax = plt.subplots(ncols=1, figsize=(10,7))
-    bdtcut = 0.7
-    plt.hist(energy[sig_scores > bdtcut], weights=effA[sig_scores > bdtcut],
+    bdtcut = 0.6
+    h, g, v = plt.hist(energy[sig_scores > bdtcut], weights=effA[sig_scores > bdtcut],
              color='b', label='NuGen (bdt > %0.2f)'%bdtcut,
              range=(xmin,xmax),
              bins=nbins,
@@ -104,5 +110,13 @@ def ploteffarea(dt_eval, dt_train, opts):
     plt.grid()
     plt.tight_layout()
 
-    plt.savefig("plots/EffArea/EffArea_bdtcut%0.2f.eps"%bdtcut)
+    # Dump output
+    output = {'logebins': bins,
+              'effA': h}
+    pickle.dump(output,open('myeffaDump.pkl','w'))
+
+
+
+    # Save figure
+    plt.savefig("plots/EffArea/EffArea_bdtcut%0.2f_sep3best.png"%bdtcut)
     plt.show()

@@ -32,9 +32,10 @@ def savemodel(dt_train, opts):
 
     # Train the bdt
     bdt.fit(dt_train.getDataNoWeight(), dt_train.targets)
-
+    
     # Write output to models
-    joblib.dump(bdt, 'models/'+opts.bdtnamename+'.pkl')
+    #joblib.dump(bdt, 'models/'+opts.bdtname+'.pkl')
+    joblib.dump(bdt, 'models/'+opts.bdtname+'_moretrainingdata_wllh.pkl')
 
 
 #------------------------------------------------------#
