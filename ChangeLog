@@ -1,3 +1,6 @@
+2015-09-07 Matt:
+	* Adding error bar plotting function
+
 2015-09-04 Matt:
 	* Committing n-1 check for variables
 	* Updating variable list -- TODO: understand dark percentage or remove it!
