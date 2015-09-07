@@ -16,6 +16,7 @@ from PlotEffArea import ploteffarea
 from nMinus1Check import n1check
 
 from sklearn.cross_validation import train_test_split
+from sklearn.externals import joblib
 
 # Generic
 import numpy as np
@@ -171,7 +172,12 @@ if options.savemodel:
 
 # Save the data
 if options.savedata:
-    savedata(d_eval,"testing")
+    
+    if len(opts.modelinput) != 0:
+        clf = joblib.load(opts.modelinput)
+        savedata(d_eval,"testing",clf)
+    else:
+        savedata(d_eval,"testing")
 
 # Run over the evaluation data set
 if options.evaluate:

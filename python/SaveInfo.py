@@ -69,6 +69,9 @@ def savedata(dt, basename, clf=None):
     dt_out_sig = np.rec.fromrecords(dt_out_sig, names=csl)
     dt_out_bkg = np.rec.fromrecords(dt_out_bkg, names=csl)
 
+    dt_out_sig['w'] *= dt.sf
+    dt_out_bkg['w'] *= dt.sf
+
     # Convert directly to a root file
     array2root(dt_out_sig, basename + '_sig.root', 'tree','recreate')
     array2root(dt_out_bkg, basename + '_bkg.root', 'tree','recreate')
