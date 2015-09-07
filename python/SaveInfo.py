@@ -13,7 +13,7 @@ from sklearn.tree import DecisionTreeClassifier
 
 from sklearn.externals import joblib # recommended instead of pickle
 
-from root_numpy import array2root
+from root_numpy import array2root, array2tree
 import numpy as np
 
 #------------------------------------------------------#
@@ -45,35 +45,31 @@ def savedata(dt, basename, clf=None):
     
     # Get the data to write
     dt_out = dt.data
-    labels = dt.t_varnames + ['w']
+    labels = dt.treenames + dt.w_varnames + ['w']
 
     # if a classifier is passed, then add that to the data field
     if clf != None:
         scores = clf.decision_function(dt.getDataNoWeight())
-        dt_out = np.concatenate((dt_out, scores),axis=0)
+        scores = scores.reshape((len(scores),1))
+        dt_out = np.concatenate((dt_out, scores),axis=1)
         labels += ['score']
 
-    # Move back to rec array
-    reclabels = []
-    row0 = dt_out[0]
-    for i in range(len(row0)):
-        reclabels.append((labels[i],row0[i].dtype))
 
-    dt_out = np.array(dt_out, dtype=reclabels)
-    print dt_out
-    print dt_out['w'][0]
-
+    csl = ""
+    for i in range(len(labels)-1):
+        csl += labels[i] + ","
+    csl += labels[-1]
+    print csl
 
     # Separate the data into signal and background
-    #dt_out_sig = dt_out[ dt.targets > 0.5 ]
-    #dt_out_bkg = dt_out[ dt.targets < 0.5 ]
+    dt_out_sig = dt_out[ dt.targets > 0.5 ]
+    dt_out_bkg = dt_out[ dt.targets < 0.5 ]
 
-    #print dt_out_sig
-    #print dt_out_sig.dtype
-    #print dt_out_sig.dtype.names
+    # Turn into record array
+    dt_out_sig = np.rec.fromrecords(dt_out_sig, names=csl)
+    dt_out_bkg = np.rec.fromrecords(dt_out_bkg, names=csl)
 
     # Convert directly to a root file
-    #array2root(dt_out_sig, basename + '_sig.root', 'tree')
-    #array2root(dt_out_bkg, basename + '_bkg.root', 'tree')
-    
+    array2root(dt_out_sig, basename + '_sig.root', 'tree','recreate')
+    array2root(dt_out_bkg, basename + '_bkg.root', 'tree','recreate')
     

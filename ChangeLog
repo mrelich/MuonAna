@@ -1,5 +1,6 @@
 2015-09-07 Matt:
 	* Adding error bar plotting function
+	* Adding ability to write output to a root tree
 
 2015-09-04 Matt:
 	* Committing n-1 check for variables
