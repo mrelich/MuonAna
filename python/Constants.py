@@ -11,4 +11,9 @@ m_astronorm = 1e-8   # fixed at 100 TeV
 # Short names for weighted samples
 m_sname_E2 = "E2"
 m_sname_corsika = "Corsika"
+m_sname_Conv = "AtmosConv"
+m_sname_Prompt = "AtmosPrompt"
 
+
+# Weight names to save
+m_weightnames = ['w', 'w_conv', 'w_prompt']

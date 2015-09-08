@@ -18,9 +18,20 @@ class Data:
                   #'spefit2bayes_logl-spefit2_logl',
                   'hs_cogz',
                   'sqrt(pow(hs_cogx,2)+pow(hs_cogy,2))',
-                  '(dhC_ndir_doms != 0 ? dhC_qdir_pulses/dhC_ndir_doms : 0)',
+                  'dhC_qdir_pulses/dhC_ndir_doms',
                   'DP_20Per'
     ]
+
+    # Names for output tree
+    treenames = ['hs_q_tot_pulses',
+                 'cos_spline_mpe_zen',
+                 'spline_mpe_rlogl',
+                 'hs_cogz',
+                 'hs_cogrho',
+                 'dhC_qdir_pulses_over_dhC_ndir_doms',
+                 'DP_20Per'
+             ]
+                 
     
     # Names of variables for a legend or axis
     l_varnames = ['NPE',
@@ -33,12 +44,20 @@ class Data:
                   'Dark Percentage']
 
     # Variable names needed for weights
+    # TODO: Clean up... not all of this is weight info!
     w_varnames = ['nuE',
                   'NEvents',
                   'OneWeight',
                   'primPDG',
                   'primE',
                   'CorsikaDiffFlux',
+                  'honda2006_gaisserH3a_elbert_numu',
+                  'sarcevic_max_gaisserH3a_elbert_numu',
+                  'trunc_bins_MuEres',
+                  'trunc_bins_E',
+                  'trunc_doms_MuEres',
+                  'trunc_doms_E',
+                  #'muE',
     ]
 
     # THe sample name
@@ -76,11 +95,12 @@ class Data:
     # weights from the list. 
     def getDataNoWeight(self):
         #return self.data[:,:-1]
-        return self.data[:,:-len(self.w_varnames+['w'])]
+        return self.data[:,:-len(self.w_varnames+m_weightnames)]
 
     # Maybe we want just the weights
     def getDataWeights(self):
         return self.data[:,-1]
+
 
 #-----------------------------------------------------#
 # Data Reader
@@ -97,17 +117,27 @@ def ReadData(path_to_file, sname, selection=""):
                         selection = selection)
 
     # Add an extra field for the weights
+    emptydata = []
+    for i in range(len(m_weightnames)):
+        emptydata.append(np.zeros(len(indata),dtype=float))
     indata = append_fields(base  = indata,
-                           names = 'w', 
-                           data  = np.zeros(len(indata),dtype=float),
+                           names = m_weightnames, 
+                           data  = emptydata,
                            usemask = False,
                            dtypes=float)
 
     # Loop and calculate the weights
     weight_tool = WeightTool()
     for i in range(len(indata)):
-        indata[i]['w'] = weight_tool.getWeight(indata[i],sname)
-
+        
+        if sname == m_sname_corsika:
+            indata[i][m_weightnames[0]] = weight_tool.getWeight(indata[i],sname)
+            indata[i][m_weightnames[1]] = 0
+            indata[i][m_weightnames[2]] = 0
+        else:
+            indata[i][m_weightnames[0]] = weight_tool.getWeight(indata[i],m_sname_E2)
+            indata[i][m_weightnames[1]] = weight_tool.getWeight(indata[i],m_sname_Conv)
+            indata[i][m_weightnames[2]] = weight_tool.getWeight(indata[i],m_sname_Prompt)
 
     # Convert to record array
     #indata = rec2array(indata,fields=dataobj.t_varnames + ['w'])

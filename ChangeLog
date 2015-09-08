@@ -1,5 +1,11 @@
 2015-09-08 Matt:
 	* using np.sqrt to take sqrt of numpy array (thanks Takao!)
+	* Adding ability to save output for atmospheric weighted data
+	* Adding lower energy data to saved output
+	* Adding plotting script to plot any variables we save
+	* Updating MyPlots to plot a series of data
+		Note: Maybe this should be handled differently... as in only plots one dataset.
+		that is more generic.  Go with this for now... deadlines :O
 
 2015-09-07 Matt:
 	* Adding error bar plotting function

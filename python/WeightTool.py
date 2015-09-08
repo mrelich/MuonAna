@@ -5,25 +5,52 @@ from math import log, cos, log10, pi
 
 class WeightTool:
 
+    #---------------------------------------------#
     # Wrapper method
+    #---------------------------------------------#
     def getWeight(self,varlist,sname):
         if sname == m_sname_E2:        return self.getE2(varlist)
         elif sname == m_sname_corsika: return self.getCorsika(varlist)
+        elif sname == m_sname_Conv   : return self.getConv(varlist)
+        elif sname == m_sname_Prompt : return self.getPrompt(varlist)
         else:
             print "WTF you are trying to get weight that doesn't exist!"
             print "Returning a weight of 0"
             return 0.    
 
+    #---------------------------------------------#
     # Method to get E2 weight
+    #---------------------------------------------#
     def getE2(self,varlist):
         return m_livetime * \
             varlist['OneWeight'] * \
             m_astronorm * \
             1./pow(varlist['nuE'],2) * \
             1./(m_nugenNFiles * varlist['NEvents'])
+
+    #---------------------------------------------#
+    # Get the Conventional weight
+    #---------------------------------------------#
+    def getConv(self, varlist):
+        return  m_livetime * \
+            varlist['OneWeight'] * \
+            2 * varlist['honda2006_gaisserH3a_elbert_numu'] * \
+            1./(m_nugenNFiles * varlist['NEvents'])
+
+    #---------------------------------------------#
+    # Get prompt Weight
+    #---------------------------------------------#
+    def getPrompt(self, varlist):
+        return  m_livetime * \
+            varlist['OneWeight'] * \
+            2 * varlist['sarcevic_max_gaisserH3a_elbert_numu'] * \
+            1./(m_nugenNFiles * varlist['NEvents'])
+
         
+    #---------------------------------------------#
     # Get Corsika weight
     # For total iron primary
+    #---------------------------------------------#
     def getCorsika(self, varlist):
 
         # only pick out iron primary
@@ -46,4 +73,5 @@ class WeightTool:
               fluxsum
         
         return val
+
         

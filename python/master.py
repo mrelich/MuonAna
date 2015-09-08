@@ -48,6 +48,9 @@ parser.add_option("--savemodel",action="store_true",
 parser.add_option("--savedata",action="store_true",
                   default=False, dest="savedata",
                   help="Save the data not used in training")
+parser.add_option("--savename",action="store",
+                  default="testing", dest="savename",
+                  help="Save the data not used in training to this filename")
 parser.add_option("--ploteffarea",action="store_true",
                   default=False, dest="ploteffarea",
                   help="Plot Effective area")
@@ -149,44 +152,75 @@ d_tst = combine(sig_X_tst,bkg_X_tst,sig_y_tst,bkg_y_tst,"tst",
 # Determine which option to run
 #---------------------------------------------------#
 
+#**********************************************#
 # Perform TMVA like test of correlations and
 # comparisons for testing and training set
+#**********************************************#
 if options.tmvatest: 
     tmvatest(d_tot,d_trn,d_tst,opts)
 
+#**********************************************#
 # Perform the grid search
+#**********************************************#
 if options.gridsearch: 
     gridSearch(d_dev, d_eval, opts)
 
-# Perform validation using parameters in Options.py
+#**********************************************#
+# Perform validation using parameters 
+# in Options.py
+#**********************************************#
 if options.validation:
     kvalidation(d_dev, opts, k=3, njobs=2)
 
-# Check some other methods and see if there is any benefit
+#**********************************************#
+# Check some other methods and see if there 
+# is any benefit
+#**********************************************#
 if options.explore:
     explore(d_trn, d_tst)
 
-# Save the trained model which can then be used later
+#**********************************************#
+# Save the trained model which can then 
+# be used later
+#**********************************************#
 if options.savemodel:
     savemodel(d_dev, opts)
 
+#**********************************************#
 # Save the data
+#**********************************************#
 if options.savedata:
     
-    if len(opts.modelinput) != 0:
-        clf = joblib.load(opts.modelinput)
-        savedata(d_eval,"testing",clf)
-    else:
-        savedata(d_eval,"testing")
+    # Check if model is set
+    if len(opts.modelinput) == 0:
+        print "Please specify the input model to run"
+        print "Otherwise this process of saving scores"
+        print "will take too long."
+        sys.exit()
 
+    # Read in the low energy data as well
+    d_LE = ReadData(opts.fsig, m_sname_E2, opts.cuts+"&&!"+opts.sigcut)
+
+    # Load classifier
+    clf = joblib.load(opts.modelinput)
+
+    # save data
+    savedata(d_eval, d_LE, options.savename, clf)
+
+#**********************************************#
 # Run over the evaluation data set
+#**********************************************#
 if options.evaluate:
     evaluate(d_eval,d_dev,opts)
 
+#**********************************************#
 # Plot effective area
+#**********************************************#
 if options.ploteffarea:
     ploteffarea(d_eval,d_dev,opts)
 
+#**********************************************#
 # Check results of bdt by removing 1 variable
+#**********************************************#
 if options.n1check:
     n1check(d_trn, d_tst, opts)

@@ -5,6 +5,7 @@
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=#
 
 from MyData import Data
+from MyPlots import getErrorBars, plotErrorBars
 
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.tree import DecisionTreeClassifier
@@ -13,6 +14,7 @@ import matplotlib.pyplot as plt
 from sklearn.externals import joblib
 
 import numpy as np
+from math import sqrt
 
 #------------------------------------------------------#
 # Method to evaluate and plot bdt score
@@ -56,32 +58,39 @@ def evaluate(dt_eval, dt_train, opts):
     fig, ax = plt.subplots(ncols=1, figsize=(10,7))
 
     # Set minimum and maximum for x-axis
-    xminmax = (-1,1)
-
+    xmin = -1
+    xmax = 1
+    nbins = 100
+    
     # Make hist for signal
-    plt.hist(sig_scores, weights=sig_weights,
-             color='r',label='signal',range=xminmax,
+    plt.hist(sig_scores, weights = sig_weights,
+             color='r',range=(xmin, xmax),
              alpha=0.5,
-             bins = 100, log=True,
-             histtype='stepfilled')
+             bins = nbins, #log=True,
+             histtype='step')
+
+    # Add error bars
+    plotErrorBars(sig_scores, sig_weights, nbins, xmin, xmax, 'r', 'signal')
 
     # Make hist for bkg
-    plt.hist(bkg_scores, weights=bkg_weights,
-             color='b',label='background',range=xminmax,
+    plt.hist(bkg_scores, weights = bkg_weights,
+             color='b',range=(xmin,xmax),
              alpha=0.5,
-             bins = 100, log=True,
-             histtype='stepfilled')
+             bins = nbins, #log=True,
+             histtype='step')
     
+    # Add error bars
+    plotErrorBars(bkg_scores, bkg_weights, nbins, xmin, xmax, 'b', 'background')
+
     # Miscellanous
     plt.xlabel("BDT output")
     plt.ylabel("Events / year / bin")
     plt.legend(loc='best')
     plt.grid()
     plt.xticks(np.arange(-1, 1.1, 0.1))
-    #plt.xticks(np.arange(-5, 5.2, 0.5))
-    #plt.semilogy()
-    #ax.set_yscale("log")
-    plt.savefig("plots/evaluate/WeightedResult_"+opts.bdtname+"_withOutBayes_fromModel.png")
+    plt.ylim([1e-2,1e6])
+    ax.set_yscale("log")
+    #plt.savefig("plots/evaluate/WeightedResult_"+opts.bdtname+"_withOutBayes_fromModel.png")
 
     plt.show()
 

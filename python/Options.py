@@ -14,7 +14,7 @@ class Options:
                  #fbkg       = "trees/Corsika_11362_Aug24.root",
                  fsig       = "trees/NuGen_10634_Aug31.root",
                  fbkg       = "trees/Corsika_11362_Aug31.root",
-                 sigcut     = "log10(nuE)>=6",
+                 sigcut     = "(log10(nuE)>=6)",
                  #devfrac    = 0.33,
                  devfrac    = 0.5,
                  trainfrac  = 0.5,
