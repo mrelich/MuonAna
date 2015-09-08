@@ -1,3 +1,6 @@
+2015-09-08 Matt:
+	* using np.sqrt to take sqrt of numpy array (thanks Takao!)
+
 2015-09-07 Matt:
 	* Adding error bar plotting function
 	* Adding ability to write output to a root tree

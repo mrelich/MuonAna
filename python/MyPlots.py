@@ -7,7 +7,6 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
-from math import sqrt
 
 #--------------------------------------------#
 # Get error bars
@@ -23,8 +22,7 @@ def getErrorBars(data, weights, nbins, xmin, xmax):
                            bins=nbins,range=(xmin,xmax))
 
     # take sqrt
-    for i in range(len(be)):
-        be[i] = sqrt(be[i])
+    be = np.sqrt(be)
 
     # Get bin centers
     center = (bins[:-1] + bins[1:])/2.
