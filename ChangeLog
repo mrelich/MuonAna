@@ -1,3 +1,9 @@
+2015-09-14 Matt:
+	* Adding plotmaster for data and mc comparison
+	* Debugging which variables should be used still.  Qdir/Ndir has poor agreement with data.
+	* Committing status of the code
+	* TODO: Clean up post conference.
+
 2015-09-08 Matt:
 	* using np.sqrt to take sqrt of numpy array (thanks Takao!)
 	* Adding ability to save output for atmospheric weighted data

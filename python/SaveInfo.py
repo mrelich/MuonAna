@@ -36,13 +36,16 @@ def savemodel(dt_train, opts):
     
     # Write output to models
     #joblib.dump(bdt, 'models/'+opts.bdtname+'.pkl')
-    joblib.dump(bdt, 'models/'+opts.bdtname+'_moretrainingdata_wllh.pkl')
+    #joblib.dump(bdt, 'models/'+opts.bdtname+'_moretrainingdata_wllh.pkl')
+    #joblib.dump(bdt, 'models/'+opts.bdtname+'_woDP20_ntree1000.pkl')
+    #joblib.dump(bdt, 'models/'+opts.bdtname+'_woDP20_wztravel_wcogzsigma_ntree500.pkl')
+    joblib.dump(bdt, 'models/'+opts.bdtname+'.pkl')
 
 
 #------------------------------------------------------#
 # Save datasets to a root tree
 #------------------------------------------------------#
-def savedata(dt, dt_LE, basename, clf=None):
+def savedata(dt, dt_LE, basename, clf=None, dt_real=None):
     
     # Get the data to write
     dt_out = dt.data
@@ -50,6 +53,10 @@ def savedata(dt, dt_LE, basename, clf=None):
 
     # Also take care of the low energy data
     dt_LE_out = dt_LE.data
+
+    # If we have real data, save as well
+    if dt_real != None:
+        dt_real_out = dt_real.data
 
     # if a classifier is passed, then add that to the data field
     if clf != None:
@@ -61,6 +68,11 @@ def savedata(dt, dt_LE, basename, clf=None):
         LE_scores = clf.decision_function(dt_LE.getDataNoWeight())
         LE_scores = LE_scores.reshape((len(LE_scores),1))
         dt_LE_out = np.concatenate((dt_LE_out, LE_scores),axis=1)
+
+        if dt_real != None:
+            real_scores = clf.decision_function(dt_real.getDataNoWeight())
+            real_scores = real_scores.reshape((len(real_scores),1))
+            dt_real_out   = np.concatenate((dt_real_out,real_scores),1) 
         
     csl = ""
     for i in range(len(labels)-1):
@@ -76,6 +88,9 @@ def savedata(dt, dt_LE, basename, clf=None):
     dt_out_bkg = np.rec.fromrecords(dt_out_bkg, names=csl)
     dt_LE_out  = np.rec.fromrecords(dt_LE_out, names=csl)
 
+    if dt_real != None:
+        dt_real_out = np.rec.fromrecords(dt_real_out, names=csl)
+
     for wn in m_weightnames:
         dt_out_sig[wn] *= dt.sf
         dt_out_bkg[wn] *= dt.sf
@@ -84,10 +99,15 @@ def savedata(dt, dt_LE, basename, clf=None):
     # Convert directly to a root file
     signame   = 'processed_trees/' + basename + '_sig.root'
     bkgname   = 'processed_trees/' + basename + '_bkg.root'
+    dataname  = 'processed_trees/' + basename + '_data.root'
 
     array2root(dt_out_sig, signame, 'tree','recreate')
     array2root(dt_out_bkg, bkgname, 'tree','recreate')
 
     # Put LE sig into the same file
     array2root(dt_LE_out, signame, 'tree')
+
+    # Save real data if added
+    if dt_real != None:
+        array2root(dt_real_out, dataname, 'tree','recreate')
 

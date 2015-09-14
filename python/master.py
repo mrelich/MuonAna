@@ -8,7 +8,7 @@ from Tools import split_data
 # Options to be used
 from TMVATest import tmvatest
 from GridSearch import gridSearch
-from Validation import kvalidation
+from Validation import kvalidation, k3validplot
 from MethodExplore import explore
 from SaveInfo import savemodel, savedata
 from Evaluate import evaluate
@@ -30,6 +30,9 @@ parser = OptionParser()
 parser.add_option("--validation",action="store_true",
                   default=False, dest="validation",
                   help="Run k-fold validation")
+parser.add_option("--validationplots",action="store_true",
+                  default=False, dest="validationplots",
+                  help="Run k-fold validation plots")
 parser.add_option("--tmvatest", action="store_true",
                   default=False, dest="tmvatest",
                   help="Run TMVA like test")
@@ -84,31 +87,6 @@ opts = Options(bdtopt = options.bdtopt,
 d_sig = ReadData(opts.fsig, m_sname_E2, opts.cuts+"&&"+opts.sigcut)
 d_bkg = ReadData(opts.fbkg, m_sname_corsika, opts.cuts)
 
-# Mix the simulation
-#X_total = np.concatenate((d_sig.data, d_bkg.data),axis=0)
-#y_total = np.concatenate((d_sig.targets, d_bkg.targets),axis=0)
-
-# Create a total data obj
-#d_tot = Data(X_total,y_total,"total")
-
-# Get development and evaluation datasets
-#d_dev, d_eval = split_data(X_total,y_total,
-#                           tr_size=opts.devfrac,
-#                           rnd_state=2212457,
-#                           name="devsplit",
-#                           w_train = 1./opts.devfrac,
-#                           w_test = 1./(1-opts.devfrac))
-
-# Get training and test set from the dev set 
-# Remember weight factor is now a fraction of 
-# the amount passed in!
-#d_trn, d_tst  = split_data(d_dev.data,d_dev.targets,
-#                           tr_size=opts.trainfrac,
-#                           rnd_state=49122,
-#                           name="trainsplit",
-#                           w_train = 1./(opts.devfrac*opts.trainfrac),
-#                           w_test  = 1./((1-opts.devfrac)*(1-opts.trainfrac)))
-
 # Get training and development sets for signal
 sig_X_dev, sig_X_eval, sig_y_dev, sig_y_eval = train_test_split(d_sig.data,
                                                                 d_sig.targets,
@@ -119,6 +97,11 @@ sig_X_trn, sig_X_tst, sig_y_trn, sig_y_tst = train_test_split(sig_X_dev,
                                                               train_size = opts.trainfrac,
                                                               random_state=2212457)
 
+print "---------------------------------------------------"
+print "Signal: "
+print "Development: ", len(sig_X_dev)
+print "Evaluate:    ", len(sig_X_eval)
+
 # Get training and development sets for data
 bkg_X_dev, bkg_X_eval, bkg_y_dev, bkg_y_eval = train_test_split(d_bkg.data,
                                                                 d_bkg.targets,
@@ -128,6 +111,11 @@ bkg_X_trn, bkg_X_tst, bkg_y_trn, bkg_y_tst = train_test_split(bkg_X_dev,
                                                               bkg_y_dev,
                                                               train_size = opts.trainfrac,
                                                               random_state=2212457)
+
+print "---------------------------------------------------"
+print "Background:"
+print "Development: ", len(bkg_X_dev)
+print "Evaluate:    ", len(bkg_X_eval)
 
 
 # Now combine signal and bkg into dev, eval, trn, and tst
@@ -171,6 +159,9 @@ if options.gridsearch:
 #**********************************************#
 if options.validation:
     kvalidation(d_dev, opts, k=3, njobs=2)
+
+if options.validationplots:
+    k3validplot(d_dev, opts)
 
 #**********************************************#
 # Check some other methods and see if there 
@@ -217,7 +208,12 @@ if options.evaluate:
 # Plot effective area
 #**********************************************#
 if options.ploteffarea:
-    ploteffarea(d_eval,d_dev,opts)
+    
+    # Add in the low energy data as well
+    d_LE = ReadData(opts.fsig, m_sname_E2, opts.cuts+"&&!"+opts.sigcut)
+
+    # Add it to the evaluation data
+    ploteffarea(d_eval,d_dev,opts,d_LE)
 
 #**********************************************#
 # Check results of bdt by removing 1 variable

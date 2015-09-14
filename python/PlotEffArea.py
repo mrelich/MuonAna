@@ -20,7 +20,7 @@ import pickle
 #------------------------------------------------------#
 # Plotting method
 #------------------------------------------------------#
-def ploteffarea(dt_eval, dt_train, opts):
+def ploteffarea(dt_eval, dt_train, opts, dt_LowE):
 
     # If modelinput is specified then read in model
     bdt = None
@@ -43,6 +43,9 @@ def ploteffarea(dt_eval, dt_train, opts):
     sig_scores = bdt.decision_function(dt_eval.getDataNoWeight()[dt_eval.targets > 0.5])
     sig_data   = dt_eval.data[dt_eval.targets > 0.5]
 
+    # Also for low energy
+    le_sig_scores = bdt.decision_function(dt_LowE.getDataNoWeight())
+
     # Specify the number of bins and the range
     #nbins = int(30)
     #xmin  = float(5)
@@ -63,7 +66,7 @@ def ploteffarea(dt_eval, dt_train, opts):
     Eloc         = len(dt_eval.t_varnames) + dt_eval.w_varnames.index('nuE') 
 
     NEvents = sig_data[0][ len(dt_eval.t_varnames) + dt_eval.w_varnames.index('NEvents') ]
-    nfiles  = dt_eval.sf / (NEvents*961) 
+
 
     # Basic methods
     def mcLogEBin(E):
@@ -73,36 +76,53 @@ def ploteffarea(dt_eval, dt_train, opts):
     def mcEMax(mc_log_ebin):
         return pow(10,(1+mc_log_ebin)/ebins_per_decade)
 
-
     # Calculate effective area
-    effA = np.zeros(len(sig_scores),dtype=float)
-    energy = np.empty(len(sig_scores),dtype=float)
-    for i in range(len(effA)):
-        #print sig_data[i]
-        E = sig_data[i][Eloc]
-        OneWeight = sig_data[i][oneweightloc]
+    def getEffA(data, sf):
+        effA = np.zeros(len(data),dtype=float)
+        energy = np.empty(len(data),dtype=float)        
+        nfiles  = sf / (NEvents*961)         
+        for i in range(len(effA)):
 
-        mclogebin = mcLogEBin(E)
-        mcemin = mcEMin(mclogebin)
-        mcemax = mcEMax(mclogebin)
+            E = data[i][Eloc]
+            OneWeight = data[i][oneweightloc]
+            
+            mclogebin = mcLogEBin(E)
+            mcemin = mcEMin(mclogebin)
+            mcemax = mcEMax(mclogebin)
+            
+            effA[i] = 1e-4 * OneWeight * nfiles * 1/(solidangle*(mcemax-mcemin))
+            energy[i] = log10(E)
 
-        #if(i < 10):
-        #    print log10(E), OneWeight, NEvents, nfiles, mclogebin, mcemin, mcemax, log10(E), ebins_per_decade, 1e-4 * OneWeight * nfiles * 1/(solidangle*(mcemax-mcemin))
+        return effA, energy
 
-        #print 1e-4 * OneWeight * nfiles * 1/(solidangle*(mcemax-mcemin))
-        effA[i] = 1e-4 * OneWeight * nfiles * 1/(solidangle*(mcemax-mcemin))
-        energy[i] = log10(E)
+    
+    effA, energy = getEffA(sig_data,dt_eval.sf)
+    le_effA, le_energy = getEffA(dt_LowE.data,dt_LowE.sf)
 
+    # Now all scale factor info has been added
+    # combine the data for ease of plotting
+    effA = np.concatenate((effA, le_effA))
+    energy = np.concatenate((energy, le_energy))
+    sig_scores = np.concatenate((sig_scores,le_sig_scores))
 
     # Draw eff area
     fig, ax = plt.subplots(ncols=1, figsize=(10,7))
     bdtcut = 0.6
-    h, g, v = plt.hist(energy[sig_scores > bdtcut], weights=effA[sig_scores > bdtcut],
-             color='b', label='NuGen (bdt > %0.2f)'%bdtcut,
-             range=(xmin,xmax),
-             bins=nbins,
-             log=True,
-             histtype='step')
+    h, g, v = plt.hist(energy[sig_scores > bdtcut], 
+                       weights=effA[sig_scores > bdtcut],
+                       color='b', label='NuGen (bdt > %0.2f)'%bdtcut,
+                       range=(xmin,xmax),
+                       bins=nbins,
+                       log=True,
+                       histtype='step')
+
+    #hle, gle, vle = plt.hist(le_energy[le_sig_scores > bdtcut], 
+    #                         weights=le_effA[le_sig_scores > bdtcut],
+    #                         color='r', label='NuGen low# (bdt > %0.2f)'%bdtcut,
+    #                         range=(xmin,xmax),
+    #                         bins=nbins,
+    #                         log=True,
+    #                         histtype='step')
     
     plt.ylim([1.e-3, 1.e4])
     plt.xlabel('log$_{10}$(E/GeV)')
@@ -118,5 +138,5 @@ def ploteffarea(dt_eval, dt_train, opts):
 
 
     # Save figure
-    plt.savefig("plots/EffArea/EffArea_bdtcut%0.2f_sep3best.png"%bdtcut)
+    #plt.savefig("plots/EffArea/EffArea_bdtcut%0.2f_sep3best.png"%bdtcut)
     plt.show()

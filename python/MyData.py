@@ -15,11 +15,13 @@ class Data:
     t_varnames = ['hs_q_tot_pulses',
                   'cos(spline_mpe_zen)',
                   'spline_mpe_rlogl',
-                  #'spefit2bayes_logl-spefit2_logl',
                   'hs_cogz',
                   'sqrt(pow(hs_cogx,2)+pow(hs_cogy,2))',
                   'dhC_qdir_pulses/dhC_ndir_doms',
-                  'DP_20Per'
+                  #'dhC_ndir_doms',
+                  #'dhC_qdir_pulses',
+                  'hs_z_travel',
+                  #'hs_cogz_sigma'
     ]
 
     # Names for output tree
@@ -29,19 +31,24 @@ class Data:
                  'hs_cogz',
                  'hs_cogrho',
                  'dhC_qdir_pulses_over_dhC_ndir_doms',
-                 'DP_20Per'
+                 #'dhC_ndir_doms',
+                 #'dhC_qdir_pulses',
+                 'hs_z_travel',
+                 #'cogz_sigma'
              ]
                  
     
     # Names of variables for a legend or axis
     l_varnames = ['NPE',
-                  'cos(Spline MPE Zen)',
-                  'Spline MPE rlogl',
-                  'llh ratio',
+                  r'cos($\theta$)',
+                  'Fit Quality',
                   'COGz',
-                  'COGrho',
+                  r'COG$\rho$',
                   'NPEdir/Nchdir',
-                  'Dark Percentage']
+                  #r'Nch^{dir}',
+                  'ztravel',
+                  #'cogz_sigma'
+    ]
 
     # Variable names needed for weights
     # TODO: Clean up... not all of this is weight info!
@@ -51,6 +58,10 @@ class Data:
                   'primPDG',
                   'primE',
                   'CorsikaDiffFlux',
+                  'cor_Weight',
+                  'cor_DiplopiaWeight',
+                  'cor_Polygonato',
+                  'cor_TimeScale',
                   'honda2006_gaisserH3a_elbert_numu',
                   'sarcevic_max_gaisserH3a_elbert_numu',
                   'trunc_bins_MuEres',
@@ -99,7 +110,7 @@ class Data:
 
     # Maybe we want just the weights
     def getDataWeights(self):
-        return self.data[:,-1]
+        return self.data[:,-len(m_weightnames)]
 
 
 #-----------------------------------------------------#
@@ -130,10 +141,15 @@ def ReadData(path_to_file, sname, selection=""):
     weight_tool = WeightTool()
     for i in range(len(indata)):
         
-        if sname == m_sname_corsika:
+        if sname == m_sname_corsika or sname == m_sname_corsikaLE:
             indata[i][m_weightnames[0]] = weight_tool.getWeight(indata[i],sname)
             indata[i][m_weightnames[1]] = 0
             indata[i][m_weightnames[2]] = 0
+        elif sname == m_sname_data:
+            indata[i][m_weightnames[0]] = 1
+            indata[i][m_weightnames[1]] = 0
+            indata[i][m_weightnames[2]] = 0
+
         else:
             indata[i][m_weightnames[0]] = weight_tool.getWeight(indata[i],m_sname_E2)
             indata[i][m_weightnames[1]] = weight_tool.getWeight(indata[i],m_sname_Conv)

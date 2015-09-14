@@ -15,8 +15,9 @@ class Options:
                  fsig       = "trees/NuGen_10634_Aug31.root",
                  fbkg       = "trees/Corsika_11362_Aug31.root",
                  sigcut     = "(log10(nuE)>=6)",
-                 #devfrac    = 0.33,
-                 devfrac    = 0.5,
+                 devfrac    = 0.5,                 
+                 #devfrac    = 0.75,  
+                 #devfrac    = 0.9,                 
                  trainfrac  = 0.5,
                  bdtopt     = 0,
                  modelin    = ""):
@@ -52,22 +53,42 @@ class Options:
             
             self.bdtname  = "adaboost"
 
-        elif(bdtopt == 1):                         # passL3Muon - up going
+        elif(bdtopt == 1):                         # passL3Muon
             
-            self.cuts = "passL3Muon&&cos(spline_mpe_zen)<0.2"
+            self.cuts = "passL3Muon"
             
-            self.ntrees   = 1000
-            self.lrate    = 1.3
+            self.ntrees   = 500
+            self.lrate    = 0.1
+            self.maxdepth = 6
+            
+            self.bdtname  = "adaboost500"
+
+        elif(bdtopt == 2):                         # passL3Muon
+            
+            self.cuts = "passL3Muon"
+            
+            self.ntrees   = 800
+            self.lrate    = 0.1
+            self.maxdepth = 7
+            
+            self.bdtname  = "adaboost800d7"
+
+        elif(bdtopt == 3):                         # passL3Muon - up going
+            
+            self.cuts = "cos(spline_mpe_zen)<0.2"
+            
+            self.ntrees   = 800
+            self.lrate    = 0.1
             self.maxdepth = 7
             
             self.bdtname  = "adaboost_upgoing"
 
-        elif(bdtopt == 2):                         # passL3Muon - down going
+        elif(bdtopt == 4):                         # passL3Muon - down going
             
-            self.cuts = "passL3Muon&&cos(spline_mpe_zen)>=0.2"
+            self.cuts = "cos(spline_mpe_zen)>=0.2"
             
-            self.ntrees   = 1000
-            self.lrate    = 1.3
+            self.ntrees   = 800
+            self.lrate    = 0.1
             self.maxdepth = 7
             
             self.bdtname  = "adaboost_downgoing"

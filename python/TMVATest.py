@@ -53,7 +53,7 @@ def correlations(data, sname, **kwds):
         
     plt.tight_layout()
     #plt.show()
-    plt.savefig("plots/tmvatest/"+sname+".eps")
+    plt.savefig("plots/tmvatest/"+sname+".png")
     
 
 #------------------------------------------------#
@@ -88,12 +88,16 @@ def test_train_ROC(bdt, dt_train, dt_test):
     plt.grid()
     #plt.show()
     
-    plt.savefig("plots/tmvatest/ROC.eps")
+    plt.savefig("plots/tmvatest/ROC.png")
 
 #------------------------------------------------#
 # Simple overtraining comp
 #------------------------------------------------#
-def test_train_compare(bdt, dt_train, dt_test, bins=30):
+def test_train_compare(bdt, dt_train, dt_test, 
+                       savename="plots/tmvatest/overtrain_check.png",
+                       bins=30):
+
+    print "Plotting test_train_compare"
 
     # Now plot the training and test samples on same figure
     # to check for over-training
@@ -148,11 +152,9 @@ def test_train_compare(bdt, dt_train, dt_test, bins=30):
     ax1.set_ylim(bottom=0)
     
     # Save
-    #plt.savefig("plots/tmvatest/overtrain_check.eps")
-    #plt.savefig("plots/tmvatest/overtrain_check.pdf")
-    plt.savefig("plots/tmvatest/overtrain_check.png")
+    plt.savefig(savename)
     
-    plt.show()
+    #plt.show()
 
 #------------------------------------------------#
 # Method to make plots as are done in TMVA
@@ -172,6 +174,8 @@ def tmvatest(dt_total, dt_train, dt_test,bdtpath=""):
     # Plot correlations
     correlations(pdt_tot[cbkg].drop('y',1),"var_cor_bkg")
     correlations(pdt_tot[csig].drop('y',1),"var_cor_sig")
+
+    return
 
     # Try to read in bdt if path set
     bdt = None

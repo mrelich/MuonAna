@@ -45,9 +45,13 @@ def evaluate(dt_eval, dt_train, opts):
     sig_weights = dt_eval.getDataWeights()[dt_eval.targets > 0.5] * dt_eval.sf
     bkg_weights = dt_eval.getDataWeights()[dt_eval.targets < 0.5] * dt_eval.sf
 
+    print sig_scores
+    print bkg_scores
+    print sig_weights
+    print bkg_weights
 
     # Print some information for a set of cuts
-    cuts = np.arange(0,1,0.05)
+    cuts = np.arange(-1,1,0.05)
     for cut in cuts:
         print "------------------------------------------"
         print "cut: ", cut
@@ -62,25 +66,31 @@ def evaluate(dt_eval, dt_train, opts):
     xmax = 1
     nbins = 100
     
+    #plt.yscale("log")    
+    plt.ylim([1e-2,1e6])
+
+    # Add error bars
+    plotErrorBars(sig_scores, sig_weights, nbins, xmin, xmax, 'r', 'signal')
+
+    # Add error bars
+    plotErrorBars(bkg_scores, bkg_weights, nbins, xmin, xmax, 'b', 'background')
+
     # Make hist for signal
     plt.hist(sig_scores, weights = sig_weights,
              color='r',range=(xmin, xmax),
              alpha=0.5,
-             bins = nbins, #log=True,
-             histtype='step')
+             bins = nbins, log=True,
+             histtype='stepfilled')
 
-    # Add error bars
-    plotErrorBars(sig_scores, sig_weights, nbins, xmin, xmax, 'r', 'signal')
+
 
     # Make hist for bkg
     plt.hist(bkg_scores, weights = bkg_weights,
              color='b',range=(xmin,xmax),
              alpha=0.5,
-             bins = nbins, #log=True,
-             histtype='step')
+             bins = nbins, log=True,
+             histtype='stepfilled')
     
-    # Add error bars
-    plotErrorBars(bkg_scores, bkg_weights, nbins, xmin, xmax, 'b', 'background')
 
     # Miscellanous
     plt.xlabel("BDT output")
@@ -88,9 +98,10 @@ def evaluate(dt_eval, dt_train, opts):
     plt.legend(loc='best')
     plt.grid()
     plt.xticks(np.arange(-1, 1.1, 0.1))
-    plt.ylim([1e-2,1e6])
-    ax.set_yscale("log")
-    #plt.savefig("plots/evaluate/WeightedResult_"+opts.bdtname+"_withOutBayes_fromModel.png")
+    plt.tight_layout()
+    #ax.set_yscale("log")
+    
+    #plt.savefig("plots/evaluate/WeightedResult_"+opts.bdtname+"_fromModel.png")
 
     plt.show()
 
