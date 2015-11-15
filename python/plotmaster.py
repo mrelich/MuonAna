@@ -27,7 +27,7 @@ vardefs = [('log10(hs_q_tot_pulses)',r'log$_{10}$(Qtot)',50,0,6,1e-7),
            ('cogz_sigma',r'COG$_{z}$ $\sigma$',50,0,450,1e-8),
            ('log10(trunc_bins_E)',r'log$_{10}$(Energy Proxy)',40,2,7,1e-5)]   
 
-selections = [('','L3Muon'),
+selections = [('EHEFilter','L3Muon'),
               ('log10(hs_q_tot_pulses)>3','Qtot1k'),
               ('cos_spline_mpe_zen<0.2','Upgoing'),
               ('cos_spline_mpe_zen>=0.2','Downgoing'),

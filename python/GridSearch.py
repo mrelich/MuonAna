@@ -19,28 +19,28 @@ from sklearn.ensemble import GradientBoostingClassifier
 def gridSearch(dt_dev, dt_eval, opts):
 
     # Make the BDT classifier
-    bdt = AdaBoostClassifier(DecisionTreeClassifier(max_depth=opts.maxdepth),    
+    bdt = AdaBoostClassifier(DecisionTreeClassifier(max_depth=opts.maxdepth,
+                                                    min_samples_split=opts.minsamplesplit),    
                              algorithm = 'SAMME',
                              n_estimators=opts.ntrees,
                              learning_rate=opts.lrate)
     
     # Setup the parameter grid to scan
-    pgrid = {"n_estimators": [100,200,300,400,500,600,700,800,900,1000],
-             "base_estimator__max_depth": [3,4,5,6,7,8,9,10],
-             #"max_depth": [2,3,4,5,6],
-             "learning_rate": [0.1,0.3,0.5,0.7,0.9,1.1,1.3,1.5]
+    pgrid = {"n_estimators": [200,400,600,800],
+             "base_estimator__max_depth": [3,4,5,6,7],
+             "base_estimator__min_samples_split" : [5000, 10000, 15000, 20000],
+             "learning_rate": [0.1,0.3,0.5,0.7,0.9,1.1]
          }
     
     # Now setup the grid search
     gsearch = grid_search.GridSearchCV(bdt, pgrid, cv=3,
                                        scoring='roc_auc',
-                                       n_jobs=6)
+                                       n_jobs=12)
 
     # Fit dat shit
-    _ = gsearch.fit(dt_dev.getDataNoWeight(), dt_dev.targets)
+    gsearch.fit(dt_dev.getDataNoWeight(), dt_dev.targets)
 
     # Print the results of the search
-    # Copied http://betatim.github.io/posts/advanced-sklearn-for-TMVA/
     print "Best parameter set found on development set:"
     print
     print gsearch.best_estimator_
@@ -52,8 +52,6 @@ def gridSearch(dt_dev, dt_eval, opts):
     print
     print "With the model trained on the full development set:"
     
-    y_true, y_pred = dt_dev.targets, gsearch.decision_function(dt_dev.getDataNoWeight())
-    print "  It scores %0.4f on the full development set"%roc_auc_score(y_true, y_pred)
     y_true, y_pred = dt_eval.targets, gsearch.decision_function(dt_eval.getDataNoWeight())
     print "  It scores %0.4f on the full evaluation set"%roc_auc_score(y_true, y_pred)
     

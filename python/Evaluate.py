@@ -45,11 +45,6 @@ def evaluate(dt_eval, dt_train, opts):
     sig_weights = dt_eval.getDataWeights()[dt_eval.targets > 0.5] * dt_eval.sf
     bkg_weights = dt_eval.getDataWeights()[dt_eval.targets < 0.5] * dt_eval.sf
 
-    print sig_scores
-    print bkg_scores
-    print sig_weights
-    print bkg_weights
-
     # Print some information for a set of cuts
     cuts = np.arange(-1,1,0.05)
     for cut in cuts:
@@ -101,7 +96,9 @@ def evaluate(dt_eval, dt_train, opts):
     plt.tight_layout()
     #ax.set_yscale("log")
     
-    #plt.savefig("plots/evaluate/WeightedResult_"+opts.bdtname+"_fromModel.png")
+    plt.savefig("plots/evaluate/WeightedResult_"+opts.bdtname+"_fromModel.png")
 
-    plt.show()
+    # Turn on when you want to see the plot
+    # todo make this an option
+    #plt.show()
 

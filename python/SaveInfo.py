@@ -25,11 +25,12 @@ def savemodel(dt_train, opts):
     # Make sure all model parameters are set in Options.py
     # TODO: Add Classifier options so we can use others 
     #       e.g. Gradient Boosting
-    bdt = AdaBoostClassifier(DecisionTreeClassifier(max_depth=opts.maxdepth),
+    bdt = AdaBoostClassifier(DecisionTreeClassifier(max_depth=opts.maxdepth,
+                                                    min_samples_split=opts.minsamplesplit),
                              algorithm = 'SAMME',
                              n_estimators=opts.ntrees,
                              learning_rate=opts.lrate)
-
+    
 
     # Train the bdt
     bdt.fit(dt_train.getDataNoWeight(), dt_train.targets)

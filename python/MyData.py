@@ -17,11 +17,8 @@ class Data:
                   'spline_mpe_rlogl',
                   'hs_cogz',
                   'sqrt(pow(hs_cogx,2)+pow(hs_cogy,2))',
-                  'dhC_qdir_pulses/dhC_ndir_doms',
-                  #'dhC_ndir_doms',
-                  #'dhC_qdir_pulses',
+                  'dhC_track_length',
                   'hs_z_travel',
-                  #'hs_cogz_sigma'
     ]
 
     # Names for output tree
@@ -30,11 +27,8 @@ class Data:
                  'spline_mpe_rlogl',
                  'hs_cogz',
                  'hs_cogrho',
-                 'dhC_qdir_pulses_over_dhC_ndir_doms',
-                 #'dhC_ndir_doms',
-                 #'dhC_qdir_pulses',
+                 'track_length',
                  'hs_z_travel',
-                 #'cogz_sigma'
              ]
                  
     
@@ -44,10 +38,8 @@ class Data:
                   'Fit Quality',
                   'COGz',
                   r'COG$\rho$',
-                  'NPEdir/Nchdir',
-                  #r'Nch^{dir}',
+                  'track length',
                   'ztravel',
-                  #'cogz_sigma'
     ]
 
     # Variable names needed for weights
@@ -68,10 +60,11 @@ class Data:
                   'trunc_bins_E',
                   'trunc_doms_MuEres',
                   'trunc_doms_E',
+                  'spline_mpe_zen'
                   #'muE',
-    ]
+                  ]
 
-    # THe sample name
+    # The sample name
     sname = ""
 
     # Variables needed for calculating eff area

@@ -10,14 +10,10 @@ class Options:
 
     # Constructor
     def __init__(self, 
-                 #fsig = "trees/NuGen_10634_Aug24.root",
-                 #fbkg       = "trees/Corsika_11362_Aug24.root",
-                 fsig       = "trees/NuGen_10634_Aug31.root",
-                 fbkg       = "trees/Corsika_11362_Aug31.root",
+                 fsig       = "trees/NuGen_11069_Sep14_L3Applied.root",
+                 fbkg       = "trees/Corsika_11362_Sep10_L3Applied.root",
                  sigcut     = "(log10(nuE)>=6)",
-                 devfrac    = 0.5,                 
-                 #devfrac    = 0.75,  
-                 #devfrac    = 0.9,                 
+                 devfrac    = 0.8,
                  trainfrac  = 0.5,
                  bdtopt     = 0,
                  modelin    = ""):
@@ -45,53 +41,115 @@ class Options:
         # a specific set of reco-cuts
         if(bdtopt == 0):                         # passL3Muon
             
-            self.cuts = "passL3Muon"
-            
-            self.ntrees   = 800
-            self.lrate    = 0.1
-            self.maxdepth = 6
-            
-            self.bdtname  = "adaboost"
-
-        elif(bdtopt == 1):                         # passL3Muon
-            
-            self.cuts = "passL3Muon"
+            self.cuts = "(1)"
             
             self.ntrees   = 500
             self.lrate    = 0.1
-            self.maxdepth = 6
+            self.maxdepth = 3
+            self.minsamplesplit = 5000
             
-            self.bdtname  = "adaboost500"
+            self.bdtname  = "adaboostminsplit5k"
+
+        elif(bdtopt == 1):                         # passL3Muon
+            
+            self.cuts = "(1)"
+            
+            self.ntrees   = 500
+            self.lrate    = 0.1
+            self.maxdepth = 3
+            self.minsamplesplit = 2
+            
+            self.bdtname  = "adaboostminsplit2"
 
         elif(bdtopt == 2):                         # passL3Muon
             
-            self.cuts = "passL3Muon"
+            self.cuts = "(spline_mpe_zen >= -999 && cos(spline_mpe_zen) < 0.2)"
             
-            self.ntrees   = 800
+            self.ntrees   = 500
             self.lrate    = 0.1
-            self.maxdepth = 7
+            self.maxdepth = 3
+            self.minsamplesplit = 5
             
-            self.bdtname  = "adaboost800d7"
+            self.bdtname  = "adaboostminsplit2_upgoing"
 
         elif(bdtopt == 3):                         # passL3Muon - up going
             
-            self.cuts = "cos(spline_mpe_zen)<0.2"
+            self.cuts = "(spline_mpe_zen >= -999 && cos(spline_mpe_zen) < 0.2)"
             
-            self.ntrees   = 800
+            self.ntrees   = 500
             self.lrate    = 0.1
             self.maxdepth = 7
-            
-            self.bdtname  = "adaboost_upgoing"
+            self.minsamplesplit = 5000
+                        
+            self.bdtname  = "adaboostminsplit5k_upgoing"
 
         elif(bdtopt == 4):                         # passL3Muon - down going
             
-            self.cuts = "cos(spline_mpe_zen)>=0.2"
+            self.cuts = "(1)"
             
             self.ntrees   = 800
             self.lrate    = 0.1
             self.maxdepth = 7
+            self.minsamplesplit = 2
+
+            self.bdtname  = "adaboostminsplit2_800tree"
+
+        elif(bdtopt == 5):                         # passL3Muon - down going
             
-            self.bdtname  = "adaboost_downgoing"
+            self.cuts = "(1)"
+            
+            self.ntrees   = 800
+            self.lrate    = 0.1
+            self.maxdepth = 7
+            self.minsamplesplit = 5000
+
+            self.bdtname  = "adaboostminsplit5k_800tree"
+
+        elif(bdtopt == 6):                         # passL3Muon - down going
+            
+            self.cuts = "(1)"
+            
+            self.ntrees   = 800
+            self.lrate    = 0.1
+            self.maxdepth = 7
+            self.minsamplesplit = 10000
+
+            self.bdtname  = "adaboostminsplit10k_800tree"
+
+        elif(bdtopt == 7):                         # passL3Muon - down going
+            
+            self.cuts = "(spline_mpe_zen >= -999 && cos(spline_mpe_zen) < 0.2)"
+            
+            self.ntrees   = 800
+            self.lrate    = 0.1
+            self.maxdepth = 7
+            self.minsamplesplit = 10000
+
+            self.bdtname  = "adaboostminsplit10k_upgoing_800tree"
+
+        elif(bdtopt == 8):                         # passL3Muon - down going
+            
+            self.cuts = "(1)"
+            
+            self.ntrees   = 800
+            self.lrate    = 0.1
+            self.maxdepth = 7
+            self.minsamplesplit = 5
+
+            self.bdtname  = "adaboostminsplit5_800tree"
+
+        elif(bdtopt == 9):                         # passL3Muon - down going
+            
+            self.cuts = "(spline_mpe_zen >= -999 && cos(spline_mpe_zen) < 0.2)"
+            
+            self.ntrees   = 800
+            self.lrate    = 0.1
+            self.maxdepth = 6
+            self.minsamplesplit = 10000
+
+            self.bdtname  = "adaboostminsplit10k_upgoing_800tree_maxdepth6"
+
+
 
         else:                                      # Model isn't specified
             print "BDT option is not supported"

@@ -1,3 +1,8 @@
+2015-11-15 Matt;
+	* Committing the final variable choices as well as some updated
+		sections of code -- see diff for more details.
+	* TODO: Still need to clean things up and tag..
+
 2015-09-14 Matt:
 	* Adding plotmaster for data and mc comparison
 	* Debugging which variables should be used still.  Qdir/Ndir has poor agreement with data.

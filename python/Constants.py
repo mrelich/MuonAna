@@ -2,7 +2,8 @@
 m_livetime = 365 * 24 * 60 * 60; # livetime in seconds
 
 # Number of files
-m_nugenNFiles = 961
+#m_nugenNFiles = 961
+m_nugenNFiles = 4982
 m_corsikaNFiles = 34453
 m_LECorsikaNFiles= 4994
 
